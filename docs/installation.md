@@ -7,7 +7,7 @@ Setup the the repo and the application's environment.
     ```bash
     $ sudo apt-get update
     $ sudo apt-get install virtualenv build-essential imagemagick \
-      python-dev libjpeg-dev zlib1g-dev libtiff5 libtiff5-dev 
+      python-dev libjpeg-dev zlib1g-dev libtiff5 libtiff5-dev
     ```
 
     _TODO: Refine above package list to minimum needed for PIL to install._
@@ -28,7 +28,7 @@ Setup the the repo and the application's environment.
     $ virtualenv virtualenv --python=python2.7
     $ source virtualenv/bin/activate
     (virtualenv) $ pip install pip --upgrade
-    (virtualenv) $ pip install -r app/etc/python-virtualenv pip-requirements.txt
+    (virtualenv) $ pip install -r requirements.txt
     ```
 
 4. Create local conf files in etc dir.
