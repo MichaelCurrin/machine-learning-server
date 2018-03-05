@@ -1,0 +1,18 @@
+black
+black and white
+blue
+brown
+copper
+gold
+green
+grey
+multi-colour
+neutral
+orange
+pink
+purple
+red
+rose gold
+silver
+white
+yellow

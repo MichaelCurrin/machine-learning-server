@@ -1,0 +1,14 @@
+# Python compiled binaries.
+*.pyc
+
+
+# Python virtual environment as directory or symlink.
+virtualenv/
+virtualenv
+
+
+# Local configuration files.
+*.local.conf
+
+# Log files.
+*.log
