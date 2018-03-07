@@ -3,6 +3,6 @@
 
 Documentation:
 
-- [installation instructions](docs/installation.md)
-- [usage instructions](docs/usage.md)
-- [services API endpoint documentation](docs/servicesAPI.md)
+- [Installation instructions](docs/installation.md)
+- [Usage instructions](docs/usage.md)
+- [Services API endpoint documentation](docs/servicesAPI.md)
