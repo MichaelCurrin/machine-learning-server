@@ -20,12 +20,12 @@ Setup the the repo and the application's environment.
     ```
 
 3. Install python dependencies:
-    * Create a Python 2.7 virtual environment then install packages. You may ignore the `--python` flag if your default system is Python 2.X.
+    * Create a Python 2 virtual environment then install packages. You may ignore the `--python` flag if your default system is Python 2.X.
     * Note that a flag to access system site packages is _not_ necessary.
 
     ```bash
     $ git checkout develop
-    $ virtualenv virtualenv --python=python2.7
+    $ virtualenv virtualenv --python=python2
     $ source virtualenv/bin/activate
     (virtualenv) $ pip install pip --upgrade
     (virtualenv) $ pip install -r requirements.txt
