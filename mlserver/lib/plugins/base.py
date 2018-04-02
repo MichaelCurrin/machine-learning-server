@@ -28,7 +28,7 @@ class PluginBase(object):
         self.name = name
         self.description = description
         self.conf = ModelConf(modelName)
-        self.context = 'LIB.PLUGINS.{pluginName}'.format(
+        self.context = "LIB.PLUGINS.{pluginName}".format(
             pluginName=self.__class__.__name__.upper()
         )
 
@@ -94,7 +94,6 @@ class PluginBase(object):
                 # Name is a prefix for the tensor and should be left empty.
                 tf.import_graph_def(graphDef, name='')
         duration = time.time() - startTime
-
         msg = "Loaded model. Duration: {0:4.3f}s.".format(duration)
         logger(msg, context=self.getContext())
 

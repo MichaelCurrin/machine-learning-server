@@ -5,7 +5,7 @@ Usage for testing:
     $ python -m lib.config
 """
 import os
-from ConfigParser import SafeConfigParser
+from configparser import SafeConfigParser
 
 from . import APP_DIR
 
@@ -28,9 +28,7 @@ class AppConf(SafeConfigParser):
     CONF_NAMES = ('app.conf', 'app.local.conf')
 
     def __init__(self):
-        """
-        Read and parse the global and local configs.
-        """
+        """Read and parse the global and local configs."""
         SafeConfigParser.__init__(self)
 
         appDir = APP_DIR
@@ -74,8 +72,7 @@ class ModelConf(SafeConfigParser):
     CONF_NAMES = ('model.conf', 'model.local.conf')
 
     def __init__(self, name):
-        """
-        Read and parse the global and local configs.
+        """Read and parse the global and local configs.
 
         @param name: The name of the model directory. e.g. 'themeClassifier'.
         """
@@ -108,7 +105,7 @@ class ModelConf(SafeConfigParser):
     def getModelPath(self):
         """Get the path to the configured model file.
 
-        @return: absolute path to model file if one is set, otherwise None.
+        @return: Absolute path to model file if one is set, otherwise None.
         """
         modelFileName = self.get('inputFiles', 'modelFileName')
 
@@ -124,7 +121,7 @@ class ModelConf(SafeConfigParser):
     def getLabelsPath(self):
         """Get the path to the configured labels file.
 
-        @return: absolute path to labels file if one is set, otherwise None.
+        @return: Absolute path to labels file if one is set, otherwise None.
         """
         labelsFileName = self.get('inputFiles', 'labelsFileName')
 
