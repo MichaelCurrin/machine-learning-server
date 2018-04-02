@@ -20,7 +20,7 @@ Setup the the repo and the application's environment.
     
     ```bash
     $ git checkout develop
-    $ virtualenv virtualenv --python python3.6
+    $ virtualenv virtualenv -p python3
     $ source virtualenv/bin/activate
     (virtualenv) $ pip install --upgrade pip
     (virtualenv) $ pip install -r requirements.txt
