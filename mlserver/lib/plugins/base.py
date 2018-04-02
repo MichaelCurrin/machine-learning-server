@@ -337,13 +337,15 @@ def testPlugin(pluginClass):
     """
     import json
 
-    print 'Getting attributes of a `{0}` class instance.'.format(
-        pluginClass.__name__)
+    print("Getting attributes of a `{0}` class instance.".format(
+        pluginClass.__name__))
+
     plugin = pluginClass()
-    print 'Name: \n {0}\n'.format(plugin.getName())
-    print 'Description: \n  {0}\n'.format(plugin.getDescription())
+
+    print("Name: \n {0}\n".format(plugin.getName()))
+    print("Description: \n  {0}\n".format(plugin.getDescription()))
     metadata = plugin.getConf().asDict()
-    print 'Metadata: \n  {0}\n'.format(json.dumps(metadata, indent=4))
+    print("Metadata: \n  {0}\n".format(json.dumps(metadata, indent=4)))
 
 
 def testImagePrediction(args, pluginClass):
@@ -360,9 +362,8 @@ def testImagePrediction(args, pluginClass):
     import os
 
     if len(args) < 3 or set(args) & set(('-h', '--help')):
-        print 'Usage: python -m lib.plugins.nameOfPlugin [IMAGE_PATH] '\
-            '[X] [Y] [-p|--pretty] [-h|--help]'
-        print
+        print("Usage: python -m lib.plugins.nameOfPlugin [IMAGE_PATH]"
+            " [X] [Y] [-p|--pretty] [-h|--help]\n")
         # Show plugin data without doing a prediction.
         # TODO: show this only when requested with an argument.
         testPlugin(pluginClass)
@@ -381,4 +382,4 @@ def testImagePrediction(args, pluginClass):
 
         plugin = pluginClass()
         predictions = plugin.process(**data)
-        print json.dumps(predictions, indent=4)
+        print(json.dumps(predictions, indent=4))

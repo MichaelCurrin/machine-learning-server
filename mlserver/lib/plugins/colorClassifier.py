@@ -7,7 +7,7 @@ Usage for testing:
 import os
 import sys
 
-from base import ImagePluginBase, testImagePrediction
+from .base import ImagePluginBase, testImagePrediction
 
 
 class ColorClassifier(ImagePluginBase):

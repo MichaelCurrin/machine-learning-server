@@ -162,32 +162,32 @@ def test(modelName='colorClassifier'):
     @param modelName: the name of the model, take from one of the dirs in
         app/models/{modelName}. Defaults tot themeClassifier if not set.
     """
-    print 'App Configuration test'
-    print '========================'
+    print("App Configuration test")
+    print("========================")
     appConf = AppConf()
 
     for x in appConf.sections():
-        print '[{0}]'.format(x)
+        print("[{0}]").format(x)
         for k, v in appConf.items(x):
-            print '    {0:.<25} {1}'.format(k, v)
-        print
-    print
+            print("    {0:.<25} {1}").format(k, v)
+        print()
+    print()
 
-    print 'Model Configuration test'
-    print '========================'
+    print("Model Configuration test")
+    print("========================")
     modelConf = ModelConf(modelName)
 
     for x in modelConf.sections():
-        print '[{0}]'.format(x)
+        print("[{0}]").format(x)
         for k, v in modelConf.items(x):
-            print '    {0:.<25} {1}'.format(k, v)
-        print
+            print("    {0:.<25} {1}".format(k, v))
+        print()
 
-    print 'CherryPy Configuration test'
-    print '==========================='
+    print("CherryPy Configuration test")
+    print("===========================")
     import cherrypy
     for k, v in cherrypy.config.items():
-        print '    {0:.<25} {1}'.format(k, v)
+        print("    {0:.<25} {1}".format(k, v))
 
 
 if __name__ == '__main__':

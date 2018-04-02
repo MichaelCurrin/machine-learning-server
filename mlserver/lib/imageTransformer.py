@@ -11,8 +11,6 @@ factor results are kept as floats and not rounded down to zero as an integer.
 Usage for testing:
     $ python -m lib.imageTransformer --help
 """
-from __future__ import division
-
 import os
 import sys
 
@@ -254,8 +252,8 @@ def test(args):
     with a different filename.
     """
     if not args or set(args) & set(('-h', '--help')):
-        print "Usage: python -m lib.imageTransformer [IMAGE_PATH] [-h|--help]"
-        print "IMAGE_PATH: path to file image to transform."
+        print("Usage: python -m lib.imageTransformer [IMAGE_PATH] [-h|--help]")
+        print("IMAGE_PATH: path to file image to transform.")
     else:
         imgPath = args[0]
         imgTr = ImageTransformer()
@@ -263,15 +261,16 @@ def test(args):
 
         # Remove background transparency.
         if imgTr.getImage().format == 'PNG':
-            print 'Remove transparency.'
+            print("Remove transparency.")
             imgTr.removeTransparency()
             img = imgTr.getImage()
-            newPath = imgPath.rsplit('.', 1)[0] + '_SOLID_BG.png'
-            print ' - writing out to: {0}'.format(newPath)
+            # Use original path but add in text before the extension.
+            newPath = "{0}_SOLID_BG.png".format(imgPath.rsplit('.', 1)[0])
+            print(" - writing out to: {0}".format(newPath))
             img.save(newPath, format='png')
 
         # Crop the image and write out.
-        print 'Crop.'
+        print("Crop.")
         # Place mark at centre of image.
         x = 50
         y = 50
@@ -280,19 +279,19 @@ def test(args):
         imgTr.specialCrop(x, y, cropFactor, cropFactor)
 
         img = imgTr.getImage()
-        newPath = imgPath.rsplit('.', 1)[0] + '_CROP.jpeg'
-        print ' - writing out to: {0}'.format(newPath)
+        newPath = "{0}_CROP.jpeg".format(imgPath.rsplit(".", 1)[0])
+        print(" - writing out to: {0}".format(newPath))
         img.save(newPath, format='jpeg')
 
         # Resize the cropped image and write out.
-        print 'Resize.'
+        print("Resize.")
         targetH = 299
         targetW = 299
         imgTr.specialResize(targetH, targetW)
 
         img = imgTr.getImage()
-        newPath = imgPath.rsplit('.', 1)[0] + '_CROP_THEN_RESIZE.jpeg'
-        print ' - writing out to: {0}'.format(newPath)
+        newPath = "{0}_CROP_THEN_RESIZE.jpeg".format(imgPath.rsplit('.', 1)[0])
+        print(" - writing out to: {0}".format(newPath))
         img.save(newPath, format='jpeg')
 
 
