@@ -2,7 +2,7 @@
 """Services module."""
 import cherrypy
 
-from classify import Classify
+from .classify import Classify
 
 
 class Services(object):
