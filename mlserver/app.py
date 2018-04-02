@@ -7,7 +7,7 @@ import os
 
 import cherrypy
 
-from lib import APP_DIR, updateHTTPConfig
+from lib import APP_DIR
 from services import Services
 from lib.config import AppConf
 
