@@ -2,15 +2,12 @@
 
 Setup the the repo and the application's environment.
 
-1. Install os-level dependencies:
+1. Install system dependencies:
     
     ```bash
     $ sudo apt-get update
-    $ sudo apt-get install virtualenv build-essential imagemagick \
-      python-dev libjpeg-dev zlib1g-dev libtiff5 libtiff5-dev
+    $ sudo apt-get install python-virtualenv
     ```
-
-    _TODO: Refine above package list to minimum needed for PIL to install._
 
 2. Clone the git repository:
    
