@@ -3,7 +3,6 @@
 Setup the the repo and the application's environment.
 
 1. Install os-level dependencies:
-
     ```bash
     $ sudo apt-get update
     $ sudo apt-get install virtualenv build-essential imagemagick \
@@ -13,27 +12,22 @@ Setup the the repo and the application's environment.
     _TODO: Refine above package list to minimum needed for PIL to install._
 
 2. Clone the git repository:
-
     ```bash
     $ git clone https://michaelcurrin@bitbucket.org/michaelcurrin/machine-learning-server.git
     $ cd machine-learning-server
     ```
 
 3. Install python dependencies:
-    * Create a Python 2 virtual environment then install packages. You may ignore the `--python` flag if your default system is Python 2.X.
-    * Note that a flag to access system site packages is _not_ necessary.
-
     ```bash
     $ git checkout develop
-    $ virtualenv virtualenv --python=python2
+    $ virtualenv virtualenv --python python3.6
     $ source virtualenv/bin/activate
-    (virtualenv) $ pip install pip --upgrade
+    (virtualenv) $ pip install --upgrade pip
     (virtualenv) $ pip install -r requirements.txt
     ```
 
-4. Create local conf files in etc dir.
-    * app.local.conf 
- 
+4. If running on a production environment, the versioned [app.conf](/mlserver/etc/app.conf) and [http.conf](/mlserver/etc/http.conf) files are fine. But if running on a local development environment, then create _local_ configuration files in the [etc](/mlserver/etc) directory as below and paste in the text.
+    * `nano mlserver/etc/app.local.conf`
         ```
         ### Local App configuration ###
 
@@ -42,8 +36,7 @@ Setup the the repo and the application's environment.
         runAsDaemon: False
         ```
         
-    * http.local.conf _FIXME: When nginx is implemented, we can leave host as default and the socket_host line can be removed here._
-
+    * `nano mlserver/etc/http.local.conf` *FIXME: When nginx is implemented, we can leave host as default and the socket_host line can be removed here.*
         ```
         ### Local HTTP configuration ###
         [global]
@@ -69,7 +62,6 @@ Setup the the repo and the application's environment.
     2. Right-click the icon for your VM.
     3. Go to Settings -> Network -> Advanced -> Port Forwarding
     4. Add a new Port Forwarding rule as: 
-
         ```
         Name: mlserver
         Protocol: TCP
