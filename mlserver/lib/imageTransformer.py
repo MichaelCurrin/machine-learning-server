@@ -48,7 +48,7 @@ class ImageTransformer(object):
 
         @return: None
         """
-        if isinstance(imageInput, basestring):
+        if isinstance(imageInput, str):
             assert os.access(imageInput, os.R_OK), (
                 'Unable to read path to image: `{0}`.'.format(imageInput)
             )

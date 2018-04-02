@@ -86,7 +86,7 @@ class ModelConf(SafeConfigParser):
         # The model directory for this specific model.
         self.modelDir = os.path.join(APP_DIR, 'models', name)
         assert os.path.exists(self.modelDir), (
-            'Cannot find directory: `{name}`. Full path: {path}'
+            "Cannot find directory: `{name}`. Full path: {path}"
             .format(
                 name=name,
                 path=self.modelDir
@@ -164,9 +164,9 @@ def test(modelName='colorClassifier'):
     appConf = AppConf()
 
     for x in appConf.sections():
-        print("[{0}]").format(x)
+        print("[{0}]".format(x))
         for k, v in appConf.items(x):
-            print("    {0:.<25} {1}").format(k, v)
+            print("    {0:.<30} {1}".format(k, v))
         print()
     print()
 
@@ -175,16 +175,16 @@ def test(modelName='colorClassifier'):
     modelConf = ModelConf(modelName)
 
     for x in modelConf.sections():
-        print("[{0}]").format(x)
+        print("[{0}]".format(x))
         for k, v in modelConf.items(x):
-            print("    {0:.<25} {1}".format(k, v))
+            print("    {0:.<30} {1}".format(k, v))
         print()
 
     print("CherryPy Configuration test")
     print("===========================")
     import cherrypy
     for k, v in cherrypy.config.items():
-        print("    {0:.<25} {1}".format(k, v))
+        print("    {0:.<30} {1}".format(k, v))
 
 
 if __name__ == '__main__':
