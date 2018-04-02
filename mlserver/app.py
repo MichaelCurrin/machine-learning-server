@@ -35,16 +35,14 @@ def setup():
 
     Steps:
         1. Set global Engine configuration.
-        2. Set HTTP configuration.
-        3. Mount the applications on the tree.
-        4. Set additional configuration for services app.
+        2. Mount the applications on the tree.
+        3. Set additional configuration for services app.
+
+    Note that HTTP configuration is set when importing from lib.
     """
     confDir = os.path.join(APP_DIR, 'etc')
 
     engineConfPath = os.path.join(confDir, 'engine.conf')
-
-    for httpFile in ('http.conf', 'http.local.conf'):
-        cherrypy.config.update(os.path.join(confDir, httpFile))
 
     rootApp = cherrypy.tree.mount(Root(), '/', config=engineConfPath)
     servicesApp = cherrypy.tree.mount(Services(), '/services')

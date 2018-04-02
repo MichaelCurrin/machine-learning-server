@@ -1,4 +1,4 @@
-# Service API endpoint documentation
+# Services API endpoints
 
 Documentation for the REST API.
 

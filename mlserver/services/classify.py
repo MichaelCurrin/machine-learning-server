@@ -8,6 +8,7 @@ from lib import logger
 from lib.plugins.colorClassifier import ColorClassifier
 from lib.validators import ImageMarkValidator
 
+
 # Instantiate all the available classifier plugins at once when building the
 # server app tree.
 PLUGINS = {'colors': ColorClassifier()}
@@ -25,7 +26,7 @@ class Classify(object):
 
     def GET(self, *args, **kwargs):
         """Return a not implemented yet error."""
-        raise cherrypy.HTTPError(501, 'Not implemented yet.')
+        raise cherrypy.HTTPError(501, "Not implemented yet.")
 
     def POST(self, pluginName=None, *args, **kwargs):
         """Classify an image using given plugin name and return predictions."""
@@ -42,7 +43,7 @@ class Classify(object):
                 400,
                 "Expected plugin name as one of {names}, but got: '{actual}'."
                 .format(
-                    names=PLUGINS.keys(),
+                    names=list(PLUGINS.keys()),
                     actual=pluginName
                 )
             )

@@ -5,7 +5,7 @@ Usage for testing:
     $ python -m lib.config
 """
 import os
-from ConfigParser import SafeConfigParser
+from configparser import SafeConfigParser
 
 from . import APP_DIR
 
@@ -28,9 +28,7 @@ class AppConf(SafeConfigParser):
     CONF_NAMES = ('app.conf', 'app.local.conf')
 
     def __init__(self):
-        """
-        Read and parse the global and local configs.
-        """
+        """Read and parse the global and local configs."""
         SafeConfigParser.__init__(self)
 
         appDir = APP_DIR
@@ -74,8 +72,7 @@ class ModelConf(SafeConfigParser):
     CONF_NAMES = ('model.conf', 'model.local.conf')
 
     def __init__(self, name):
-        """
-        Read and parse the global and local configs.
+        """Read and parse the global and local configs.
 
         @param name: The name of the model directory. e.g. 'themeClassifier'.
         """
@@ -89,7 +86,7 @@ class ModelConf(SafeConfigParser):
         # The model directory for this specific model.
         self.modelDir = os.path.join(APP_DIR, 'models', name)
         assert os.path.exists(self.modelDir), (
-            'Cannot find directory: `{name}`. Full path: {path}'
+            "Cannot find directory: `{name}`. Full path: {path}"
             .format(
                 name=name,
                 path=self.modelDir
@@ -108,7 +105,7 @@ class ModelConf(SafeConfigParser):
     def getModelPath(self):
         """Get the path to the configured model file.
 
-        @return: absolute path to model file if one is set, otherwise None.
+        @return: Absolute path to model file if one is set, otherwise None.
         """
         modelFileName = self.get('inputFiles', 'modelFileName')
 
@@ -124,7 +121,7 @@ class ModelConf(SafeConfigParser):
     def getLabelsPath(self):
         """Get the path to the configured labels file.
 
-        @return: absolute path to labels file if one is set, otherwise None.
+        @return: Absolute path to labels file if one is set, otherwise None.
         """
         labelsFileName = self.get('inputFiles', 'labelsFileName')
 
@@ -162,32 +159,32 @@ def test(modelName='colorClassifier'):
     @param modelName: the name of the model, take from one of the dirs in
         app/models/{modelName}. Defaults tot themeClassifier if not set.
     """
-    print 'App Configuration test'
-    print '========================'
+    print("App Configuration test")
+    print("========================")
     appConf = AppConf()
 
     for x in appConf.sections():
-        print '[{0}]'.format(x)
+        print("[{0}]".format(x))
         for k, v in appConf.items(x):
-            print '    {0:.<25} {1}'.format(k, v)
-        print
-    print
+            print("    {0:.<30} {1}".format(k, v))
+        print()
+    print()
 
-    print 'Model Configuration test'
-    print '========================'
+    print("Model Configuration test")
+    print("========================")
     modelConf = ModelConf(modelName)
 
     for x in modelConf.sections():
-        print '[{0}]'.format(x)
+        print("[{0}]".format(x))
         for k, v in modelConf.items(x):
-            print '    {0:.<25} {1}'.format(k, v)
-        print
+            print("    {0:.<30} {1}".format(k, v))
+        print()
 
-    print 'CherryPy Configuration test'
-    print '==========================='
+    print("CherryPy Configuration test")
+    print("===========================")
     import cherrypy
     for k, v in cherrypy.config.items():
-        print '    {0:.<25} {1}'.format(k, v)
+        print("    {0:.<30} {1}".format(k, v))
 
 
 if __name__ == '__main__':
