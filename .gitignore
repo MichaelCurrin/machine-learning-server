@@ -3,12 +3,14 @@ __pycache__/
 
 
 # Python virtual environment as directory or symlink.
+venv/
+venv
 virtualenv/
 virtualenv
 
-
-# Local configuration files.
+# Local configuration and model files.
 *.local.conf
+*.local.pb
 
 # Log files.
 *.log
