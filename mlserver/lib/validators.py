@@ -8,17 +8,13 @@ from formencode import Schema, validators
 
 
 class ImageMarkValidator(Schema):
-    """
-    Validation for input of image and points co-ordinates for prediction.
+    """Validation for input of image and points co-ordinates for prediction.
 
-    The co-ordinates can be numeric or string data
-    types.
+    The co-ordinates can be numeric or string data types.
     """
 
-    # Path to image on the server. Defaults to null string, but then
-    # we raise an error elsewhere if the the imageFile object is also null.
-    imagePath = validators.String()
+    # Path to image on the server.
+    imagePath = validators.String(if_missing=None)
 
-    # TODO: Set range from 0 to 100.
-    x = validators.Int()
-    y = validators.Int()
+    x = validators.Int(min=0, max=100)
+    y = validators.Int(min=0, max=100)
