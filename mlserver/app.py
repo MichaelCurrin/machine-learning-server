@@ -24,8 +24,7 @@ class Root(object):
 
     @cherrypy.expose
     def index(self):
-        """
-        Dispatcher for the index path, which raises a not implemented error.
+        """Dispatcher for the index path, which raises a not implemented error.
         """
         raise cherrypy.HTTPError(501, "Not implemented yet.")
 
