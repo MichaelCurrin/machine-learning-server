@@ -1,4 +1,4 @@
-# CUstom Models
+# Custom Models
 
 ## Colour Classification
 
@@ -17,6 +17,6 @@ If you have your own trained model you would like to use, you can add it to the 
        $ cp path/to/myColorClassifier.pb mlserver/models/dropinColorClassifier/modelGraph.local.pb
        ```
 
-2. Update the drop-in model's [configuration file](/mlserver/models/dropColorClassifer/model.conf) if neccasary. The file is setup by default to point to a file named `modelGraph.local.pb` as above.
+2. Update the drop-in model's [configuration file](/mlserver/models/dropinColorClassifer/model.conf) if neccasary. The file is setup by default to point to a file named `modelGraph.local.pb` as above.
 
 3. Start the server as per the [Usage Instructions](usage.md) and go to [http://localhost:9000/classify/dropinColors.html]() in the browser to test it.
