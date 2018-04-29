@@ -14,7 +14,8 @@ Some of the concepts and approaches I discuss in my talk are for scaling a servi
 ## Documentation
 
 - [Installation instructions](docs/installation.md)
-- [Usage instructions](docs/usage.md)
+- [Usage instructions](docs/usage.md) for starting and using the web app
+- [Custom Models](docs/customModels.md) for optionally dropping in a user-trained model
 - [Services API endpoints](docs/servicesAPI.md)
 
 Note that this project was written and tested on a Linux environment using Python 3.6.
