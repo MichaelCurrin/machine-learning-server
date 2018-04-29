@@ -16,15 +16,33 @@ Setup the the repo and the application's environment.
     $ cd machine-learning-server
     ```
 
-3. Install python dependencies:
+3. Install Python dependencies:
     
     ```bash
     $ git checkout develop
-    $ virtualenv virtualenv -p python3
+    $ venv virtualenv -p python3.6
     $ source virtualenv/bin/activate
-    (virtualenv) $ pip install --upgrade pip
-    (virtualenv) $ pip install -r requirements.txt
+    (venv) $ pip install --upgrade pip
+    (venv) $ pip install -r requirements.txt
     ```
+
+4. Optionally configure any existing models, by creating an unversioned file to override defaults. e.g.
+
+   ```bash
+   $ nano ml_server/models/builtinColorClassifier/model.local.conf
+   # Local configuration file for builtin color classifier.
+   [image]
+    cropFactorW: 0.05
+    cropFactorH: 0.05
+    resizeW: 15
+    resizeH: 15
+   ```
+
+5. Optionally, copy a user-trained color classifier file to the drop color classifier directory. If it ends with '.local.pb', it will not be tracked by git. e.g.
+
+   ```bash
+   $ cp path/to/myColorClassifier.pb mlserver/models/dropinColorClassifier/modelGraph.local.pb
+   ```
 
 4. If running on a production environment, the versioned [app.conf](/mlserver/etc/app.conf) and [http.conf](/mlserver/etc/http.conf) files are fine. But if running on a local development environment, then create _local_ configuration files in the [etc](/mlserver/etc) directory as below and paste in the text.
     
@@ -36,7 +54,7 @@ Setup the the repo and the application's environment.
         [service]
         runAsDaemon: False
         ```
-        
+
     * `nano mlserver/etc/http.local.conf` *FIXME: When nginx is implemented, we can leave host as default and the socket_host line can be removed here.*
 
         ```
