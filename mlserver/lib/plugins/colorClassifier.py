@@ -11,25 +11,22 @@ from .base import ImagePluginBase, testImagePrediction
 
 
 class ColorClassifier(ImagePluginBase):
-    """Color Classifier plugin class."""
+    """Color Classifier plugin class.
 
-    def __init__(self):
+    This can be used for the standard or the drop-in color classifier services.
+    """
+
+    def __init__(self, modelName):
         """Initialise by setting up metadata, paths and loading the model.
-        """
-        name = 'Color Classifier'
-        description = 'Image predictor plugin for suggesting colors for'\
-            ' an image at an (x,y) co-ordinate point.'
-        modelName = 'colorClassifier'
-        # Override default value so we use an image array on the prediction.
-        getArray = True
 
+        @param modelName: The name of the directory within the models,
+            directory. The model graph file is read relative to this.
+        """
         # Send values to initialisation method of parent class and setup
         # the model conf object.
-        super(ColorClassifier, self).__init__(
-            name,
-            description,
+        super().__init__(
             modelName,
-            getArray=getArray
+            getArray=True
         )
         # Set Tensorflow verbosity level.
         os.environ['TF_CPP_MIN_LOG_LEVEL'] = self.getConf().get('logging',
@@ -45,7 +42,11 @@ def main(args):
     """Do test with the ColorClassifier plugin, as either basic test or a
     prediction, depending on the arguments.
     """
-    testImagePrediction(args, pluginClass=ColorClassifier)
+    testImagePrediction(
+        args,
+        pluginClass=ColorClassifier,
+        modelName='colorClassifier'
+    )
 
 
 if __name__ == '__main__':
