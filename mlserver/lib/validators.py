@@ -11,6 +11,9 @@ class ImageMarkValidator(Schema):
     """Validation for input of image and points co-ordinates for prediction.
 
     The co-ordinates can be numeric or string data types.
+
+    The imageFile field is omitted here because when the data comes in
+    as bytes then it cause an error of too many values.
     """
 
     # Path to image on the server.

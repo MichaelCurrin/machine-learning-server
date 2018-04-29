@@ -68,11 +68,10 @@ class Classify(object):
                 " model conf file."
             )
 
-        # Remove the imageFile until this can be handled in the validator.
-        # Add it back to the cleaned data.
+        # Remove the imageFile as uploaded bytes is hard to handle in the
+        # validator schema. Add it back to the cleaned data later.
         imageFile = kwargs.pop('imageFile', None)
-        # TODO: Add probability output and a limit of items above a number
-        # or above a probability threshold.
+
         data = ImageMarkValidator.to_python(kwargs)
         if imageFile:
             data['imageFile'] = imageFile.file
