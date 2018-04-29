@@ -10,6 +10,7 @@ virtualenv
 
 # Local configuration and model files.
 *.local.conf
+*.local.txt
 *.local.pb
 
 # Log files.
