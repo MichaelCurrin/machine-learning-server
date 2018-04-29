@@ -3,7 +3,7 @@
 
 _Author: Michael Currin_
 
-![Deep Learning Workshops logo](mlserver/ui/res/images/Deep_Learning_Workshops_logo.png)
+![Deep Learning Workshops logo](mlserver/static/img/Deep_Learning_Workshops_logo.png)
 
 I give a talk on how to a productionise machine learning service in a web server, as part of [Deep Learning Workshops](https://deeplearningworkshops.com) in Cape Town. This project contains the code and instructions needed to setup one's own local prediction service and is intended as additional material for anyone attending the workshops or with an interest in this topic.
 
