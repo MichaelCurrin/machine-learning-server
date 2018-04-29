@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Drop-in Color Predictor</title>
+    <!-- Author: Michael Currin -->
+</head>
+
+<body>
+    <div>
+        <h1>Drop-in Color Predictor</h1>
+        <p>Color predictions for the an option customised color model dropped in to the project by the user.</p>
+    </div>
+
+    <form name="pathForm" method="post" enctype="multipart/form-data" action="/services/classify/dropinColors">
+        <div>
+            <h2>Get Prediction</h2>
+        </div>
+
+        <div>
+            <h3>Image</h3>
+
+            <div>
+                <span>Upload</span>
+                <input name="imageFile" type="file" />
+            </div>
+        </div>
+        <br>
+
+        <div>
+            <h3>Co-ordinate point</h3>
+
+            <label>
+                <span>X left to right</span>
+                <br>
+                <input type="range" name="x" value="50" min="0" max="100">
+            </label>
+            <br>
+
+            <label>
+                <span>Y top to bottom</span>
+                <br>
+                <input type="range" name="y" value="50" min="0" max="100">
+            </label>
+        </div>
+        <br>
+
+        <div>
+            <input type="reset" value="Reset">
+            <button type="submit">Submit</button>
+        </div>
+    </form>
+</body>
+
+</html>

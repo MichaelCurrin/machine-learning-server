@@ -15,36 +15,17 @@ from lib.imageTransformer import ImageTransformer
 class PluginBase(object):
     """Abstract class as a base for plugins."""
 
-    def __init__(self, name, description, modelName):
-        """Instantiate an instance of the plugin.
+    def __init__(self, modelName):
+        """Instantiate a configured instance of the plugin.
 
-        @param name: human-readable name of the plugin, expected in
-            titlecase with spaces, as a string.
-        @param description: description of the plugin, as a string.
         @param modelName: the name of the plugin's model, as a string.
             This is used to setup a ModelConf instance, which holds
             the prediction parameters and model metadata.
         """
-        self.name = name
-        self.description = description
         self.conf = ModelConf(modelName)
         self.context = "LIB.PLUGINS.{pluginName}".format(
             pluginName=self.__class__.__name__.upper()
         )
-
-    def getName(self):
-        """Retrieve the name of the plugin.
-
-        @return: name of plugin, as a string.
-        """
-        return self.name
-
-    def getDescription(self):
-        """Retrieve the description of the plugin.
-
-        @return: description of plugin, as a string.
-        """
-        return self.description
 
     def getConf(self):
         """Retrieve the ModelConf instance of the plugin.
@@ -53,6 +34,20 @@ class PluginBase(object):
             data for the plugin and model.
         """
         return self.conf
+
+    def getDescription(self):
+        """Retrieve the description of the plugin.
+
+        @return: description of plugin, as a string.
+        """
+        return self.conf.get('model', 'description')
+
+    def getName(self):
+        """Retrieve the name of the plugin.
+
+        @return: name of plugin, as a string.
+        """
+        return self.conf.get('model', 'name')
 
     def getContext(self):
         """Retrieve the context of the plugin to be used for logging.
@@ -124,7 +119,6 @@ class PluginBase(object):
         # if the CSV has multiple columns.
         return [row.rstrip().split(',') for row in tf.gfile.GFile(labelsPath)]
 
-
     def _doPrediction(self):
         """All plugins require a prediction method - but it must be implemented
         in the child class.
@@ -147,22 +141,20 @@ class ImagePluginBase(PluginBase):
     image input.
     """
 
-    def __init__(self, name, description, modelName, getArray=False):
+    def __init__(self, modelName, getArray=False):
         """Initialise an instance of the ImagePluginBase class.
 
-        @param name: human-readable name of the plugin, expected in
-            titlecase with spaces, as a string.
-        @param description: description of the plugin, as a string.
         @param modelName: the name of the plugin's model, as a string.
             This is used to setup a ModelConf instance, which holds
             the prediction parameters and model metadata.
         @param getArray: Default False. Boolean flag to set the image type
             required during process, so that we get an image format
             from image transformer which is appropriate for the
-            prediction algorithm. If True, use an array, otherwise a string
-            of bytes.
+            prediction algorithm. If True, use an array (some suitable for
+            some models which need RGB pixel data as an array), otherwise
+            use a string of bytes.
         """
-        super(ImagePluginBase, self).__init__(name, description, modelName)
+        super().__init__(modelName)
         self.getArray = getArray
 
     def _preProcessImg(self, imageInput, x=None, y=None):
@@ -314,7 +306,7 @@ class ImagePluginBase(PluginBase):
         return predictedLabels
 
 
-def testPlugin(pluginClass):
+def testPlugin(pluginClass, modelName):
     """Test to create an instance of any child plugin and print its attributes.
 
     This is so that a plugin can be run independently of the other plugins
@@ -330,7 +322,8 @@ def testPlugin(pluginClass):
     the py file directly (even with app dir as working directory) will
     prevent local package imports from working.
 
-    @param pluginClass: a child plugin object as a class (not as an instance).
+    @param pluginClass: A child plugin object as a class (not as an instance).
+    @param modelName: The name of a directory in the models directory.
 
     @return: None
     """
@@ -339,7 +332,7 @@ def testPlugin(pluginClass):
     print("Getting attributes of a `{0}` class instance.".format(
         pluginClass.__name__))
 
-    plugin = pluginClass()
+    plugin = pluginClass(modelName)
 
     print("Name: \n {0}\n".format(plugin.getName()))
     print("Description: \n  {0}\n".format(plugin.getDescription()))
@@ -347,7 +340,7 @@ def testPlugin(pluginClass):
     print("Metadata: \n  {0}\n".format(json.dumps(metadata, indent=4)))
 
 
-def testImagePrediction(args, pluginClass):
+def testImagePrediction(args, pluginClass, modelName):
     """Test to do prediction for an image plugin, using a file path and
     mark co-ordinates.
 
@@ -356,6 +349,10 @@ def testImagePrediction(args, pluginClass):
 
     If help flag is supplied or there are not at least 3 arguments, a basic
     test is done to print out the plugin's attributes.
+
+    @param args: List of command-line arguments.
+    @param pluginClass: A child plugin object as a class (not as an instance).
+    @param modelName: The name of a directory in the models directory.
     """
     import json
     import os
@@ -364,8 +361,7 @@ def testImagePrediction(args, pluginClass):
         print("Usage: python -m lib.plugins.nameOfPlugin [IMAGE_PATH]"
             " [X] [Y] [-p|--pretty] [-h|--help]\n")
         # Show plugin data without doing a prediction.
-        # TODO: show this only when requested with an argument.
-        testPlugin(pluginClass)
+        testPlugin(pluginClass, modelName)
     else:
         # Expand possible '~' for user's home dir in image path.
         imgPath = args[0]
@@ -379,6 +375,6 @@ def testImagePrediction(args, pluginClass):
             'y': int(args[2]),
         }
 
-        plugin = pluginClass()
+        plugin = pluginClass(modelName)
         predictions = plugin.process(**data)
         print(json.dumps(predictions, indent=4))

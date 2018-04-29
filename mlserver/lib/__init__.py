@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
-"""Initialisation file for lib module."""
+"""
+Initialisation file for lib module.
+"""
 import os
 
 import cherrypy
+
 
 # Absolute path to the "mlserver" directory, which is considered to be the
 # main application directory within this project.
@@ -17,8 +20,10 @@ def updateHTTPConfig():
     """
     confDir = os.path.join(APP_DIR, 'etc')
 
-    for httpFile in ('http.conf', 'http.local.conf'):
-        cherrypy.config.update(os.path.join(confDir, httpFile))
+    for httpConf in ('http.conf', 'http.local.conf'):
+        httpConfPath = os.path.join(confDir, httpConf)
+        if os.access(httpConfPath, os.R_OK):
+            cherrypy.config.update(httpConfPath)
 
 
 def updateLogConfig():
@@ -27,13 +32,11 @@ def updateLogConfig():
     This is necessary even when not running the main app, so that any messages
     logged in other modules are logged to the correct location.
     """
-    for filename in ['log.conf', 'log.local.conf']:
-        logConf = os.path.join(APP_DIR, 'etc', filename)
+    for logConf in ['log.conf', 'log.local.conf']:
+        logConfPath = os.path.join(APP_DIR, 'etc', logConf)
 
-        # Skip a file which does not exist, to avoid cherrypy raising
-        # an exception.
-        if os.access(logConf, os.R_OK):
-            cherrypy.config.update(logConf)
+        if os.access(logConfPath, os.R_OK):
+            cherrypy.config.update(logConfPath)
 
 
 updateHTTPConfig()

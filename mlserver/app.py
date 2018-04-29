@@ -24,8 +24,7 @@ class Root(object):
 
     @cherrypy.expose
     def index(self):
-        """
-        Dispatcher for the index path, which raises a not implemented error.
+        """Dispatcher for the index path, which raises a not implemented error.
         """
         raise cherrypy.HTTPError(501, "Not implemented yet.")
 
@@ -54,7 +53,8 @@ def setup():
 
 
 def run():
-    """Start the Machine Learning Server."""
+    """Start the Machine Learning Server.
+    """
     setup()
     cherrypy.engine.start()
     cherrypy.engine.block()

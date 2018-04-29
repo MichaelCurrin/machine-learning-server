@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
-"""Classify application file."""
+"""
+Classify application file.
+"""
 import time
 
 import cherrypy
@@ -9,9 +11,19 @@ from lib.plugins.colorClassifier import ColorClassifier
 from lib.validators import ImageMarkValidator
 
 
+# If there is no model graph file setup for the dropin color classifier,
+# fail silently since it is optional when starting the server.
+try:
+    dropinColors = ColorClassifier('dropinColorClassifier')
+except AssertionError:
+    dropinColors = None
+
 # Instantiate all the available classifier plugins at once when building the
 # server app tree.
-PLUGINS = {'colors': ColorClassifier()}
+PLUGINS = {
+    'builtinColors': ColorClassifier('builtinColorClassifier'),
+    'dropinColors': dropinColors
+}
 
 
 @cherrypy.popargs('pluginName')
@@ -48,11 +60,18 @@ class Classify(object):
                 )
             )
 
-        # Remove the imageFile until this can be handled in the validator.
-        # Add it back to the cleaned data.
+        if plugin is None:
+            raise cherrypy.HTTPError(
+                500,
+                "That plugin has not been setup on the server. Ensure it has"
+                " a valid graph file and that this is indicated in the"
+                " model conf file."
+            )
+
+        # Remove the imageFile as uploaded bytes is hard to handle in the
+        # validator schema. Add it back to the cleaned data later.
         imageFile = kwargs.pop('imageFile', None)
-        # TODO: Add probability output and a limit of items above a number
-        # or above a probability threshold.
+
         data = ImageMarkValidator.to_python(kwargs)
         if imageFile:
             data['imageFile'] = imageFile.file

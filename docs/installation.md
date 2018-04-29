@@ -2,64 +2,49 @@
 
 Setup the the repo and the application's environment.
 
+Python 3.6 is recommended but Python 3.5 should be fine.
+
 1. Install system dependencies:
     
     ```bash
+    $ # Using Debian/Ubuntu package manager.
     $ sudo apt-get update
-    $ sudo apt-get install python-virtualenv
+    $ sudo apt-get install python3-virtualenv
+    $ # OR Install the Python3 pip using your system's package manager
+    $ # then use it to install virtualenv.
+    $ sudo pip3 install virtualenv
     ```
 
 2. Clone the git repository:
    
     ```bash
-    $ git clone https://michaelcurrin@bitbucket.org/michaelcurrin/machine-learning-server.git
+    $ git clone https://github.com/MichaelCurrin/machine-learning-server.git
     $ cd machine-learning-server
     ```
 
-3. Install python dependencies:
+3. Install Python dependencies:
     
     ```bash
-    $ git checkout develop
-    $ virtualenv virtualenv -p python3
-    $ source virtualenv/bin/activate
-    (virtualenv) $ pip install --upgrade pip
-    (virtualenv) $ pip install -r requirements.txt
+    $ virtualenv venv -p python3.6
+    $ source venv/bin/activate
+    (venv) $ pip install --upgrade pip
+    (venv) $ pip install -r requirements.txt
     ```
 
-4. If running on a production environment, the versioned [app.conf](/mlserver/etc/app.conf) and [http.conf](/mlserver/etc/http.conf) files are fine. But if running on a local development environment, then create _local_ configuration files in the [etc](/mlserver/etc) directory as below and paste in the text.
-    
-    * `nano mlserver/etc/app.local.conf`
-        ```
-        ### Local App configuration ###
+4. Optionally configure any existing models, by creating an unversioned file to override defaults. e.g.
 
-        ### Site wide service settings
-        [service]
-        runAsDaemon: False
-        ```
-        
-    * `nano mlserver/etc/http.local.conf` *FIXME: When nginx is implemented, we can leave host as default and the socket_host line can be removed here.*
+   ```bash
+    $ nano ml_server/models/builtinColorClassifier/model.local.conf
 
-        ```
-        ### Local HTTP configuration ###
-        [global]
+    # Local configuration file for builtin color classifier.
+    [image]
+    cropFactorW: 0.05
+    cropFactorH: 0.05
+    resizeW: 15
+    resizeH: 15
+   ```
 
-        ### Address
-        server.socket_host: '0.0.0.0'
-
-
-        ### Threads
-        server.thread_pool = 10
-
-
-        ### Environment
-        checker.on: True
-        engine.autoreload.on: True
-        request.show_mismatched_params: True
-        request.show_tracebacks: True
-        tools.log_headers.on: True
-        ```
-
-5. If running on a VM, configure port forwarding rules:
+5. If running on a virtual machine, configure port forwarding rules:
     1. Open the VirtualBox Manager UI:
     2. Right-click the icon for your VM.
     3. Go to Settings -> Network -> Advanced -> Port Forwarding
