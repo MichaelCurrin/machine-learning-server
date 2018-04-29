@@ -4,12 +4,15 @@ Setup the the repo and the application's environment.
 
 Python 3.6 is recommended but Python 3.5 should be fine.
 
-1. Install system dependencies :
+1. Install system dependencies:
     
     ```bash
     $ # Using Debian/Ubuntu package manager.
     $ sudo apt-get update
     $ sudo apt-get install python3-virtualenv
+    $ # OR Install the Python3 pip using your system's package manager
+    $ # then use it to install virtualenv.
+    $ sudo pip3 install virtualenv
     ```
 
 2. Clone the git repository:
@@ -22,8 +25,8 @@ Python 3.6 is recommended but Python 3.5 should be fine.
 3. Install Python dependencies:
     
     ```bash
-    $ venv virtualenv -p python3.6
-    $ source virtualenv/bin/activate
+    $ virtualenv venv -p python3.6
+    $ source venv/bin/activate
     (venv) $ pip install --upgrade pip
     (venv) $ pip install -r requirements.txt
     ```
