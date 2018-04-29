@@ -150,8 +150,9 @@ class ImagePluginBase(PluginBase):
         @param getArray: Default False. Boolean flag to set the image type
             required during process, so that we get an image format
             from image transformer which is appropriate for the
-            prediction algorithm. If True, use an array, otherwise a string
-            of bytes.
+            prediction algorithm. If True, use an array (some suitable for
+            some models which need RGB pixel data as an array), otherwise
+            use a string of bytes.
         """
         super().__init__(modelName)
         self.getArray = getArray
