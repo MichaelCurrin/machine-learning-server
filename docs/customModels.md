@@ -18,4 +18,9 @@ If you have your own trained model you would like to use, you can add it to the 
 
 2. Update the drop-in model's [configuration file](/mlserver/models/dropinColorClassifer/model.conf) if neccasary. The file is setup by default to point to a file named `modelGraph.local.pb` as above.
 
-3. Start the server as per the [Usage Instructions](usage.md) and go to [http://localhost:9000/classify/dropinColors.html]() in the browser to test it.
+3. Create a drop-in model label file at [/mlserver/models/dropinColorClassifer] so that there text labels to display on a prediction. Either move your label file there or paste your label text into the file.
+   ```bash
+   $ nano mlserver/models/dropinColorClassifier/colors.local.txt
+   ```
+
+4. Start the server as per the [Usage Instructions](usage.md) and go to [http://localhost:9000/classify/dropinColors.html]() in the browser to test it.
