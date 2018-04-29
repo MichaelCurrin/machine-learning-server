@@ -23,7 +23,8 @@ class ColorClassifier(ImagePluginBase):
             directory. The model graph file is read relative to this.
         """
         # Send values to initialisation method of parent class and setup
-        # the model conf object.
+        # the model conf object. Use an getArray as True so we that we can
+        # process the image as an array of RGB pixels.
         super().__init__(
             modelName,
             getArray=True
