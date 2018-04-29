@@ -15,7 +15,7 @@ Python 3.6 is recommended but Python 3.5 should be fine.
 2. Clone the git repository:
    
     ```bash
-    $ git clone https://michaelcurrin@bitbucket.org/michaelcurrin/machine-learning-server.git
+    $ git clone https://github.com/MichaelCurrin/machine-learning-server.git
     $ cd machine-learning-server
     ```
 
@@ -41,13 +41,7 @@ Python 3.6 is recommended but Python 3.5 should be fine.
     resizeH: 15
    ```
 
-5. Optionally, copy a user-trained color classifier file to the drop color classifier directory. If it ends with `.local.pb`, it will not be tracked by git. e.g.
-
-   ```bash
-   $ cp path/to/myColorClassifier.pb mlserver/models/dropinColorClassifier/modelGraph.local.pb
-   ```
-
-6. If running on a virtual machine, configure port forwarding rules:
+5. If running on a virtual machine, configure port forwarding rules:
     1. Open the VirtualBox Manager UI:
     2. Right-click the icon for your VM.
     3. Go to Settings -> Network -> Advanced -> Port Forwarding
