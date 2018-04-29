@@ -54,7 +54,8 @@ def setup():
 
 
 def run():
-    """Start the Machine Learning Server."""
+    """Start the Machine Learning Server.
+    """
     setup()
     cherrypy.engine.start()
     cherrypy.engine.block()
