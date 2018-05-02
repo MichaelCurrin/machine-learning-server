@@ -36,12 +36,18 @@ class Classify(object):
 
     exposed = True
 
-    def GET(self, *args, **kwargs):
-        """Return a not implemented yet error."""
+    def GET(self, pluginName=None, *args, **kwargs):
+        """Return available plugin names or raise an error on a given name.
+        """
+        if pluginName is None:
+            return {
+                'valid_plugin_names': list(PLUGINS)
+            }
         raise cherrypy.HTTPError(501, "Not implemented yet.")
 
     def POST(self, pluginName=None, *args, **kwargs):
-        """Classify an image using given plugin name and return predictions."""
+        """Classify an image using given plugin name and return predictions.
+        """
         if pluginName is None:
             raise cherrypy.HTTPError(
                 405,
