@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-"""Color Classifier plugin file.
+"""
+Color Classifier plugin file.
 
 Usage for testing:
     python -m lib.plugins.colorClassifier --help
@@ -46,7 +47,7 @@ def main(args):
     testImagePrediction(
         args,
         pluginClass=ColorClassifier,
-        modelName='colorClassifier'
+        modelName='builtinColorClassifier'
     )
 
 
