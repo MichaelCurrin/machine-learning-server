@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Built-in Color Predictor</title>
+    <!-- Author: Michael Currin -->
+</head>
+
+<body>
+    <div>
+        <h1>Built-in Digit Predictor</h1>
+
+        <p>Predictions for handwritten digits, using the project's built-in model which was trained using the MNIST dataset.</p>
+    </div>
+
+    <form name="pathForm" method="post" enctype="multipart/form-data" action="/services/classify/builtinDigits">
+        <div>
+            <h2>Get Prediction</h2>
+        </div>
+
+        <div>
+            <h3>Image</h3>
+
+            <div>
+                <span>Upload</span>
+                <input name="imageFile" type="file" />
+            </div>
+        </div>
+        <br>
+
+        <div>
+            <input type="reset" value="Reset">
+            <button type="submit">Submit</button>
+        </div>
+    </form>
+</body>
+
+</html>
