@@ -20,6 +20,8 @@ class Root(object):
 
     Does nothing alone but returns a not implemented yet error. Other
     endpoints are mounted to this one in a tree structure.
+
+    See docs/api.md for the tree structure of the API endpoints.
     """
 
     @cherrypy.expose
