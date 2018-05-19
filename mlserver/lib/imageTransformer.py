@@ -101,24 +101,21 @@ class ImageTransformer(object):
         should be removed on cropping, where 0.9 would be 90% of the original
         image.
 
-        @param xCoord: X co-ordinate of type int.
-        @param yCoord: Y co-ordinate of type int.
+        @param xCoord: X co-ordinate of type int, or value which can be cast
+            to an int.
+        @param yCoord: Y co-ordinate of type int, or value which can be cast
+            to an int.
         @param scaleFactorW: the target width crop factor, of type float.
         @param scaleFactorH: the target height crop factor, of type float.
 
         @return: None
         """
-        assert isinstance(xCoord, int), (
-            'Expected the X co-ordinate as `int`, but got type `{0}`.'
-            .format(type(xCoord).__name__)
-        )
+        xCoord = int(xCoord)
+        yCoord = int(yCoord)
+
         assert 0 <= xCoord <= 100, (
             'Expected the X co-ordinate {0} to be between 0 and 100.'
             .format(xCoord)
-        )
-        assert isinstance(yCoord, int), (
-            'Expected the Y co-ordinate as `int`, but got type `{0}`.'
-            .format(type(yCoord).__name__)
         )
         assert 0 <= yCoord <= 100, (
             'Expected the Y co-ordinate {0} to be between 0 and 100.'
