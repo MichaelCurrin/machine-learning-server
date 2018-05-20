@@ -207,11 +207,18 @@ class ImagePluginBase(PluginBase):
         t = ImageTransformer()
         t.setImage(imageInput, 'LA' if self.greyscale else 'RGB')
 
-        # Crop image, if target ratio is configured and co-ordinate point is
-        # not None. The point is allowed to be at (0, 0).
+        # Crop image if target ratio is configured and co-ordinate point is
+        # set. The point is allowed to be at (0, 0).
         if cropFactorW and cropFactorH and x is not None \
                 and y is not None:
-            t.specialCrop(x, y, cropFactorW, cropFactorH)
+            t.specialCrop(
+                x,
+                y,
+                cropFactorW,
+                cropFactorH,
+                minWidth=resizeW,
+                minHeight=resizeH
+            )
 
         # Resize image to target dimensions, if configured.
         if resizeW and resizeH:
