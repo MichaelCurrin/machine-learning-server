@@ -5,6 +5,10 @@
     <meta charset="utf-8">
     <title>Built-in Color Predictor</title>
     <!-- Author: Michael Currin -->
+
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/4.2.2/jquery.form.min.js"></script>
+    <script src="/js/main.js"></script>
 </head>
 
 <body>
@@ -24,13 +28,19 @@
 
             <div>
                 <span>Upload</span>
-                <input name="imageFile" type="file" />
+                <input name="imageFile" type="file" onchange="previewImage();"/>
             </div>
         </div>
+
+        <br>
+
+        <div id="imagePreview">
+            <img width="90" height="90">
+        </div>
+
         <br>
 
         <div>
-            <input type="reset" value="Reset">
             <button type="submit">Submit</button>
         </div>
     </form>
