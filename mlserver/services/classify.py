@@ -8,22 +8,27 @@ import cherrypy
 
 from lib import logger
 from lib.plugins.colorClassifier import ColorClassifier
-from lib.validators import ImageMarkValidator
+from lib.plugins.digitClassifier import DigitClassifier
+from lib.config import AppConf
 
+
+conf = AppConf()
 
 # If there is no model graph file setup for the dropin color classifier,
 # fail silently since it is optional when starting the server.
 try:
-    dropinColors = ColorClassifier('dropinColorClassifier')
+    dropinColors = ColorClassifier(modelName='dropinColorClassifier')
 except AssertionError:
     dropinColors = None
 
 # Instantiate all the available classifier plugins at once when building the
 # server app tree.
 PLUGINS = {
-    'builtinColors': ColorClassifier('builtinColorClassifier'),
-    'dropinColors': dropinColors
+    'builtinColors': ColorClassifier(modelName='builtinColorClassifier'),
+    'dropinColors': dropinColors,
+    'builtinDigits': DigitClassifier(modelName='builtinDigitClassifier')
 }
+CONFIGURED_PLUGINS = [k for k, v in PLUGINS.items() if v is not None]
 
 
 @cherrypy.popargs('pluginName')
@@ -46,7 +51,7 @@ class Classify(object):
         """
         if pluginName is None:
             return {
-                'valid_plugin_names': list(PLUGINS)
+                'configured_plugin_names': CONFIGURED_PLUGINS
             }
         raise cherrypy.HTTPError(501, "Not implemented yet.")
 
@@ -72,7 +77,7 @@ class Classify(object):
                 400,
                 "Expected plugin name as one of {names}, but got: '{actual}'."
                 .format(
-                    names=list(PLUGINS.keys()),
+                    names=CONFIGURED_PLUGINS,
                     actual=pluginName
                 )
             )
@@ -85,17 +90,15 @@ class Classify(object):
                 " model conf file."
             )
 
-        # Remove the imageFile as uploaded bytes is hard to handle a
-        # multi-part buffer in the validator schema. Add it back to the
-        # cleaned data later.
         imageFile = kwargs.pop('imageFile', None)
-
-        data = ImageMarkValidator.to_python(kwargs)
         if imageFile:
-            data['imageFile'] = imageFile.file
+            kwargs['imageFile'] = imageFile.file
 
         startTime = time.time()
-        predictions = plugin.process(**data)
+        predictions = plugin.process(**kwargs)
+        maxResults = conf.getint('predictions', 'maxResults')
+        predictions = predictions[:maxResults]
+
         duration = time.time() - startTime
         msg = "Completed request. Name: {name}. Duration: {duration:4.3f}s."\
             .format(

@@ -8,8 +8,11 @@ import numpy as np
 import tensorflow as tf
 
 from lib import logger
-from lib.config import ModelConf
+from lib.config import AppConf, ModelConf
 from lib.imageTransformer import ImageTransformer
+
+
+conf = AppConf()
 
 
 class PluginBase(object):
@@ -88,6 +91,7 @@ class PluginBase(object):
                 # Import the graph-def to the default TensorFlow graph.
                 # Name is a prefix for the tensor and should be left empty.
                 tf.import_graph_def(graphDef, name='')
+
         duration = time.time() - startTime
         msg = "Loaded model. Duration: {0:4.3f}s.".format(duration)
         logger(msg, context=self.getContext())
@@ -141,7 +145,7 @@ class ImagePluginBase(PluginBase):
     image input.
     """
 
-    def __init__(self, modelName, getArray=False):
+    def __init__(self, modelName, getArray=False, greyscale=False):
         """Initialise an instance of the ImagePluginBase class.
 
         @param modelName: the name of the plugin's model, as a string.
@@ -151,11 +155,16 @@ class ImagePluginBase(PluginBase):
             required during process, so that we get an image format
             from image transformer which is appropriate for the
             prediction algorithm. If True, use an array (some suitable for
-            some models which need RGB pixel data as an array), otherwise
-            use a string of bytes.
+            some models which need pixel color or brightness data as an
+            array), otherwise use a string of bytes.
+        @param greyscale: Default False. If True, do preprocessing using
+            a greyscale image, otherwise process as color (RGB). Note
+            that the LA greyscale mode has an alpha channel which can be
+            ignored, leaving a single channel of pixel brightness.
         """
         super().__init__(modelName)
         self.getArray = getArray
+        self.greyscale = greyscale
 
     def _preProcessImg(self, imageInput, x=None, y=None):
         """Apply image transformation to pre-process the image for predictions.
@@ -196,13 +205,20 @@ class ImagePluginBase(PluginBase):
             resizeW = resizeH = None
 
         t = ImageTransformer()
-        t.setImage(imageInput)
+        t.setImage(imageInput, 'LA' if self.greyscale else 'RGB')
 
-        # Crop image, if target ratio is configured and co-ordinate point is
-        # not None. The point is allowed to be at (0, 0).
+        # Crop image if target ratio is configured and co-ordinate point is
+        # set. The point is allowed to be at (0, 0).
         if cropFactorW and cropFactorH and x is not None \
                 and y is not None:
-            t.specialCrop(x, y, cropFactorW, cropFactorH)
+            t.specialCrop(
+                x,
+                y,
+                cropFactorW,
+                cropFactorH,
+                minWidth=resizeW,
+                minHeight=resizeH
+            )
 
         # Resize image to target dimensions, if configured.
         if resizeW and resizeH:
@@ -213,9 +229,18 @@ class ImagePluginBase(PluginBase):
         if self.getArray:
             # Get image pixel data then convert to array.
             arr = np.array(image.getdata())
+
+            if self.greyscale:
+                # Ignore alpha layer and keep luminosity.
+                arr = arr[:,0]
+                channels = 1
+            else:
+                channels = 3
+
             arr = np.asarray(arr, dtype='int32')
-            # Flatten the array without changing the data.
-            outputImage = arr.reshape(1, image.width * image.height * 3)
+
+            # Flatten the array.
+            outputImage = arr.reshape(1, image.width*image.height*channels)
         else:
             with BytesIO() as imgBytesArr:
                 # Write image out to a bytes array file object in memory.
@@ -357,7 +382,7 @@ def testImagePrediction(args, pluginClass, modelName):
     import json
     import os
 
-    if len(args) < 3 or set(args) & set(('-h', '--help')):
+    if not args or set(args) & set(('-h', '--help')):
         print("Usage: python -m lib.plugins.nameOfPlugin [IMAGE_PATH]"
             " [X] [Y] [-p|--pretty] [-h|--help]\n")
         # Show plugin data without doing a prediction.
@@ -367,14 +392,22 @@ def testImagePrediction(args, pluginClass, modelName):
         imgPath = args[0]
         imgPath = os.path.expanduser(imgPath)
 
+        if len(args) == 3:
+            x = int(args[1])
+            y = int(args[2])
+        else:
+            x = 50
+            y = 50
         # Do integer conversion here, but this is handled with validator at
         # the controller level.
         data = {
             'imagePath': imgPath,
-            'x': int(args[1]),
-            'y': int(args[2]),
+            'x': x,
+            'y': y,
         }
 
         plugin = pluginClass(modelName)
         predictions = plugin.process(**data)
+        maxResults = conf.getint('predictions', 'maxResults')
+        predictions = predictions[:maxResults]
         print(json.dumps(predictions, indent=4))
