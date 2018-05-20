@@ -90,7 +90,8 @@ class ImageTransformer(object):
         # Overwrite image with the modified one with transparency removed.
         self.image = img
 
-    def specialCrop(self, xCoord, yCoord, scaleFactorW, scaleFactorH):
+    def specialCrop(self, xCoord, yCoord, scaleFactorW, scaleFactorH,
+                    minWidth=1, minHeight=1):
         """Crop an image around (X,Y) point coordinates to a fraction of the
         actual image dimensions.
 
@@ -105,11 +106,19 @@ class ImageTransformer(object):
             to an int.
         @param yCoord: Y co-ordinate of type int, or value which can be cast
             to an int.
-        @param scaleFactorW: the target width crop factor, of type float.
-        @param scaleFactorH: the target height crop factor, of type float.
+        @param scaleFactorW: The target width crop factor, of type float.
+        @param scaleFactorH: The target height crop factor, of type float.
+        @param minWidth: Minimum image pixel width to crop to, to avoid getting
+            width of zero when cropping by a small percentage value on a
+            small image. Defaults to 1 if None.
+        @param minHeight: Minimum image pixel height to crop to. Defaults to
+            1 if None.
 
         @return: None
         """
+        if minWidth is None or minHeight is None:
+            minWidth = minHeight = 1
+
         xCoord = int(xCoord)
         yCoord = int(yCoord)
 
@@ -135,19 +144,18 @@ class ImageTransformer(object):
         w = img.size[0]
         h = img.size[1]
 
-        # Get pixel co-ordinates from percentage points and image dimensions.
+        # Convert co-ordinates (percentage values) into pixel values.
         xPx = int(xCoord / 100 * w)
         yPx = int(yCoord / 100 * h)
 
-        # Set target dimensions for cropped image.
-        xBox = int(scaleFactorW * w)
-        yBox = int(scaleFactorH * h)
+        targetW = max(int(scaleFactorW * w), minWidth)
+        targetH = max(int(scaleFactorH * h), minHeight)
 
         # Get pixels for the corners of the cropped image box.
-        bStartX = xPx - (xBox / 2)
-        bEndX = xPx + (xBox / 2)
-        bStartY = yPx - (yBox / 2)
-        bEndY = yPx + (yBox / 2)
+        bStartX = xPx - (targetW / 2)
+        bEndX = xPx + (targetW / 2)
+        bStartY = yPx - (targetH / 2)
+        bEndY = yPx + (targetH / 2)
 
         # Bring the target box corners back within the original image area if
         # the mark was placed too close to the original image borders.
@@ -169,7 +177,6 @@ class ImageTransformer(object):
             bEndY = h
             bStartY = bStartY - abs(h - bEndY)
 
-        # Overwrite image with image cropped around a (X, Y) point.
         self.image = img.crop((bStartX, bStartY, bEndX, bEndY))
 
     def specialResize(self, targetWidth, targetHeight):
@@ -209,7 +216,6 @@ class ImageTransformer(object):
         originalAspectRatio = w / h
         targetAspectRatio = targetWidth / targetHeight
 
-        # Check if we need to crop out sides of the image to match the target.
         if targetAspectRatio != originalAspectRatio:
             if targetAspectRatio > originalAspectRatio:
                 # Image is too tall so take some off the top and bottom.
