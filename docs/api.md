@@ -15,6 +15,9 @@ The application's HTML files in the [static directory](/mlserver/static) can be 
 - `http://host:port/` OR `http://host:port/index.html`
 - `http://host:port/classify/builtinColors.html`
 - `http://host:port/classify/dropinColors.html`
+- `http://host:port/classify/builtinDigits.html`
+- `http://host:port/css/style.css`
+- `http://host:port/js/main.js`
 
 
 ## Services endpoint
@@ -39,6 +42,8 @@ This serves as a root for all REST services.
 
 **URI**: `http://host:port/services/classify`
 
+Note that this is an API endpoint off of services endpoint and is different to the `/classifiy/...` HTML form pages covered the [Web App](#web-app) section.
+
 * **Method**: _GET_
 * **URL Query Parameters**:
     * No parameters.
@@ -48,7 +53,7 @@ This serves as a root for all REST services.
     * _Optional_:
         * None
 * **Reply on success**:
-    * Return an HTTP _400_ status and a dictionary response including valid plugin names can be used on the [Plugin endpoint](#plugin-endpoint) classify service.
+    * Return an HTTP _200_ status and a dictionary response including valid names for configured plugins, which can used on the [Plugin endpoint](#plugin-endpoint) classify service.
 
 
 ## Plugin endpoint
