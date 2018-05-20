@@ -28,6 +28,7 @@ PLUGINS = {
     'dropinColors': dropinColors,
     'builtinDigits': DigitClassifier(modelName='builtinDigitClassifier')
 }
+CONFIGURED_PLUGINS = [k for k, v in PLUGINS.items() if v is not None]
 
 
 @cherrypy.popargs('pluginName')
@@ -50,7 +51,7 @@ class Classify(object):
         """
         if pluginName is None:
             return {
-                'valid_plugin_names': list(PLUGINS)
+                'configured_plugin_names': CONFIGURED_PLUGINS
             }
         raise cherrypy.HTTPError(501, "Not implemented yet.")
 
@@ -76,7 +77,7 @@ class Classify(object):
                 400,
                 "Expected plugin name as one of {names}, but got: '{actual}'."
                 .format(
-                    names=list(PLUGINS.keys()),
+                    names=CONFIGURED_PLUGINS,
                     actual=pluginName
                 )
             )
