@@ -5,7 +5,7 @@
     ```bash
     $ cd path/to/machine-learning-server/mlserver
     $ source ../venv/bin/activate
-    $ ./app.py
+    $ (venv) ./app.py
     ```
 
 2. View the application's log files.
