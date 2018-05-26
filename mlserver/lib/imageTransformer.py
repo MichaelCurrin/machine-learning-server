@@ -238,7 +238,6 @@ class ImageTransformer(object):
             boxCorners = tuple(int(round(n)) for n in sides)
             img = img.crop(boxCorners)
 
-        # Resize the whole image to target dimensions.
         img = img.resize((targetWidth, targetHeight), Image.ANTIALIAS)
 
         # Overwrite the image with the resized and possibly cropped version.
