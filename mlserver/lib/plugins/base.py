@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """Base plugin file."""
 import json
+import os
 import time
 from io import BytesIO
 
@@ -296,7 +297,8 @@ class ImagePluginBase(PluginBase):
 
         @param imagePath: Default None. path to local image on server, as
             a string.
-        @param imageFile: Default None. Image data from request body.
+        @param imageFile: Default None. Multi-party cherrpy request body.
+            This is expected to have a file attribute with image data.
         @param x: Default None. The X co-ordinate of the mark on the image, as
             a percentage value from 0 to 100. As an integer.
         @param y: Default None. The Y co-ordinate of the mark on the image, as
@@ -308,23 +310,23 @@ class ImagePluginBase(PluginBase):
 
         if imagePath:
             image = imagePath
+            filename = os.path.basename(image)
         elif imageFile:
-            image = imageFile
+            image = imageFile.file
+            filename = imageFile.filename
         else:
-            raise ValueError("Expected value for `imagePath` or `imageFile`"
-                             " in input data.")
+            raise ValueError("Expected value for either`imagePath` or"
+                             " `imageFile` parameters.")
 
         preProcessedImg = self._preProcessImg(image, x, y)
         nodes = self._doPrediction(preProcessedImg)
         predictedLabels = [self.labels[nodeID] for nodeID in nodes]
 
-        # TODO: Get filename from uploaded image on imageFile object.
-        filename = imagePath
-        msg = 'Completed prediction. Duration: {0:4.3f}s.'\
-            ' Filename: {1}. Results: {2}.'.format(
-                time.time() - start,
-                filename,
-                json.dumps(predictedLabels)
+        msg = "Completed prediction. Duration: {duration:4.3f}s."\
+            " Filename: {filename}. Results: {results}.".format(
+                duration=time.time() - start,
+                filename=filename,
+                results=json.dumps(predictedLabels)
             )
         logger(msg=msg, context=self.getContext())
 
