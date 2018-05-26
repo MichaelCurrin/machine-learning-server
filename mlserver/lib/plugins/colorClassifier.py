@@ -36,7 +36,7 @@ class ColorClassifier(ImagePluginBase):
         # Get full paths to input files then load them.
         labelsPath = self.getConf().getLabelsPath()
         modelsPath = self.getConf().getModelPath()
-        self.labels = self._loadGuidAndDescriptionLabels(labelsPath)
+        self.labels = self._loadLabels(labelsPath)
         self.graph = self._loadGraph(modelsPath)
 
 
