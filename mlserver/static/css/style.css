@@ -11,21 +11,21 @@
 }
 
 .horizontalSlider input {
-  width: 150px;
+  width: 130px;
 }
 
 .verticalSlider {
   display: inline-block;
   width: 20px;
-  height: 150px;
+  height: 130px;
   padding: 0;
 }
 
 .verticalSlider input {
-  width: 150px;
+  width: 130px;
   height: 75px;
   margin: 0;
-  transform-origin: 75px 75px;
+  transform-origin: 65px 65px;
   transform: rotate(-90deg);
   direction: rtl;
 }
