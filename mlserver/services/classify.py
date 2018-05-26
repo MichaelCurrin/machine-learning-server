@@ -90,10 +90,6 @@ class Classify(object):
                 " model conf file."
             )
 
-        imageFile = kwargs.pop('imageFile', None)
-        if imageFile:
-            kwargs['imageFile'] = imageFile.file
-
         startTime = time.time()
         predictions = plugin.process(**kwargs)
         maxResults = conf.getint('predictions', 'maxResults')
