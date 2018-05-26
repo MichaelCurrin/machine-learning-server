@@ -99,30 +99,25 @@ class PluginBase(object):
 
         return graph
 
-    def _loadGuidAndDescriptionLabels(self, labelsPath):
-        """Load the given labels text file containing columns of GUID and
-        description data and return as a list of results.
+    def _loadLabels(self, labelsPath):
+        """Load human-readable labels from model's text labels file.
 
         The order of the text file's rows is important, since indexes of
         the list items read in correspond to the node IDs returned
-        when the plugin makes a prediction. The node IDs can then be
-        used to look up either the GUID or description values, as
-        read in and stored by this method.
+        when the plugin makes a prediction.
 
         @param labelPath: path to the labels text file. The labels file is
-            expected as a CSV text file, with NO headers. Values must be
-            separated by commas. Spaces are allowed. The rows should be
+            expected as a CSV text file, without headers. The rows should be
             in the following format:
-                row1col1,row1col2
-                row2col1,row2col2
+                label1
+                label2
                 ...
 
         @return labels: List of tuples representing rows in the input labels
             CSV file.
         """
-        # Remove the newline characters from row end and then split by comma
-        # if the CSV has multiple columns.
-        return [row.rstrip().split(',') for row in tf.gfile.GFile(labelsPath)]
+        # Remove the newline characters from row end.
+        return [row.rstrip() for row in tf.gfile.GFile(labelsPath)]
 
     def _doPrediction(self):
         """All plugins require a prediction method - but it must be implemented
@@ -268,9 +263,9 @@ class ImagePluginBase(PluginBase):
         @param imageData: image to be used for prediction, as string of
             bytes or as numpy array..
 
-        @return predictions: list of node IDs as integers. These can be mapped
-            one to one with the row indexes of the labels file, to get
-            the readable labels for a category.
+        @return predictions: list of prediction items in descending order,
+            with each dict item having a 'label' and 'score' value. Exclude
+            scores at or below the threshold of 5%.
         """
         inputTensor = self.getConf().get('tensors', 'input')
         outputTensor = self.getConf().get('tensors', 'output')
@@ -281,11 +276,15 @@ class ImagePluginBase(PluginBase):
             softmaxTensor = session.graph.get_tensor_by_name(outputTensor)
             predictions = session.run(softmaxTensor, params)
 
-        # Get items and sort from highest to lowest probability.
+        # Get node IDs and sort from highest to lowest probability.
         sortedResults = reversed(predictions[0].argsort())
 
-        # Convert numpy array into a list of node IDs.
-        return list(sortedResults)
+        return [
+            {
+                'label': self.labels[nodeID],
+                'score': "{:3.2%}".format(predictions[0][nodeID])
+            } for nodeID in sortedResults if predictions[0][nodeID] > 0.05
+        ]
 
     def process(self, imagePath=None, imageFile=None, x=None, y=None):
         """Do category prediction on the configured plugin instance using
@@ -319,18 +318,17 @@ class ImagePluginBase(PluginBase):
                              " `imageFile` parameters.")
 
         preProcessedImg = self._preProcessImg(image, x, y)
-        nodes = self._doPrediction(preProcessedImg)
-        predictedLabels = [self.labels[nodeID] for nodeID in nodes]
+        predictions = self._doPrediction(preProcessedImg)
 
         msg = "Completed prediction. Duration: {duration:4.3f}s."\
             " Filename: {filename}. Results: {results}.".format(
                 duration=time.time() - start,
                 filename=filename,
-                results=json.dumps(predictedLabels)
+                results=json.dumps(predictions)
             )
         logger(msg=msg, context=self.getContext())
 
-        return predictedLabels
+        return predictions
 
 
 def testPlugin(pluginClass, modelName):
