@@ -182,7 +182,8 @@ class ImagePluginBase(PluginBase):
         @param y:  Optional Y co-ordinate of a point to crop around. Defaults
             to None so that cropping can be skipped.
         @param getArray: Default False. If True, return outputImage as
-            numpy array instead of bytes string.
+            numpy array instead of bytes string. Set this depending on whether
+            the machine learning model expects an image or array.
 
         @return outputImage: image with pre-processing steps applied, converted
             to string of bytes by default. Return as a numpy array if
@@ -201,7 +202,10 @@ class ImagePluginBase(PluginBase):
             resizeW = resizeH = None
 
         t = ImageTransformer()
-        t.setImage(imageInput, 'LA' if self.greyscale else 'RGB')
+        # If color, using 3 channels, otherwise for greyscale reduce to a
+        # single luminance channel. This step also removes the 'A' alpha
+        # channel if present in colour or greyscale PNG images.
+        t.setImage(imageInput, 'L' if self.greyscale else 'RGB')
 
         # Crop image if target ratio is configured and co-ordinate point is
         # set. The point is allowed to be at (0, 0).
@@ -223,20 +227,10 @@ class ImagePluginBase(PluginBase):
         image = t.getImage()
 
         if self.getArray:
-            # Get image pixel data then convert to array.
+            # Get image pixel data then convert to flat array.
             arr = np.array(image.getdata())
-
-            if self.greyscale:
-                # Ignore alpha layer and keep luminosity.
-                arr = arr[:,0]
-                channels = 1
-            else:
-                channels = 3
-
             arr = np.asarray(arr, dtype='int32')
-
-            # Flatten the array.
-            outputImage = arr.reshape(1, image.width*image.height*channels)
+            outputImage = arr.reshape(1, -1)
         else:
             with BytesIO() as imgBytesArr:
                 # Write image out to a bytes array file object in memory.
