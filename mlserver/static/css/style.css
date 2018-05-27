@@ -1,3 +1,31 @@
-#verticalSlider {
-    -webkit-appearance: slider-vertical;
+/* Make horizontal slider vertical but also ensure the min value is at
+ the top end.
+ Setting `-webkit-appearance: slider-vertical;` also rotates but does not
+ work easily with reversing direction rtl.
+ */
+
+.horizontalSlider {
+  width: 20px;
+  height: 20px;
+  padding: 0;
+}
+
+.horizontalSlider input {
+  width: 130px;
+}
+
+.verticalSlider {
+  display: inline-block;
+  width: 20px;
+  height: 130px;
+  padding: 0;
+}
+
+.verticalSlider input {
+  width: 130px;
+  height: 75px;
+  margin: 0;
+  transform-origin: 65px 65px;
+  transform: rotate(-90deg);
+  direction: rtl;
 }

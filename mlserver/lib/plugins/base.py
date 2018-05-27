@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """Base plugin file."""
 import json
+import os
 import time
 from io import BytesIO
 
@@ -98,30 +99,25 @@ class PluginBase(object):
 
         return graph
 
-    def _loadGuidAndDescriptionLabels(self, labelsPath):
-        """Load the given labels text file containing columns of GUID and
-        description data and return as a list of results.
+    def _loadLabels(self, labelsPath):
+        """Load human-readable labels from model's text labels file.
 
         The order of the text file's rows is important, since indexes of
         the list items read in correspond to the node IDs returned
-        when the plugin makes a prediction. The node IDs can then be
-        used to look up either the GUID or description values, as
-        read in and stored by this method.
+        when the plugin makes a prediction.
 
         @param labelPath: path to the labels text file. The labels file is
-            expected as a CSV text file, with NO headers. Values must be
-            separated by commas. Spaces are allowed. The rows should be
+            expected as a CSV text file, without headers. The rows should be
             in the following format:
-                row1col1,row1col2
-                row2col1,row2col2
+                label1
+                label2
                 ...
 
         @return labels: List of tuples representing rows in the input labels
             CSV file.
         """
-        # Remove the newline characters from row end and then split by comma
-        # if the CSV has multiple columns.
-        return [row.rstrip().split(',') for row in tf.gfile.GFile(labelsPath)]
+        # Remove the newline characters from row end.
+        return [row.rstrip() for row in tf.gfile.GFile(labelsPath)]
 
     def _doPrediction(self):
         """All plugins require a prediction method - but it must be implemented
@@ -186,7 +182,8 @@ class ImagePluginBase(PluginBase):
         @param y:  Optional Y co-ordinate of a point to crop around. Defaults
             to None so that cropping can be skipped.
         @param getArray: Default False. If True, return outputImage as
-            numpy array instead of bytes string.
+            numpy array instead of bytes string. Set this depending on whether
+            the machine learning model expects an image or array.
 
         @return outputImage: image with pre-processing steps applied, converted
             to string of bytes by default. Return as a numpy array if
@@ -205,7 +202,10 @@ class ImagePluginBase(PluginBase):
             resizeW = resizeH = None
 
         t = ImageTransformer()
-        t.setImage(imageInput, 'LA' if self.greyscale else 'RGB')
+        # If color, using 3 channels, otherwise for greyscale reduce to a
+        # single luminance channel. This step also removes the 'A' alpha
+        # channel if present in colour or greyscale PNG images.
+        t.setImage(imageInput, 'L' if self.greyscale else 'RGB')
 
         # Crop image if target ratio is configured and co-ordinate point is
         # set. The point is allowed to be at (0, 0).
@@ -227,20 +227,10 @@ class ImagePluginBase(PluginBase):
         image = t.getImage()
 
         if self.getArray:
-            # Get image pixel data then convert to array.
+            # Get image pixel data then convert to flat array.
             arr = np.array(image.getdata())
-
-            if self.greyscale:
-                # Ignore alpha layer and keep luminosity.
-                arr = arr[:,0]
-                channels = 1
-            else:
-                channels = 3
-
             arr = np.asarray(arr, dtype='int32')
-
-            # Flatten the array.
-            outputImage = arr.reshape(1, image.width*image.height*channels)
+            outputImage = arr.reshape(1, -1)
         else:
             with BytesIO() as imgBytesArr:
                 # Write image out to a bytes array file object in memory.
@@ -267,9 +257,9 @@ class ImagePluginBase(PluginBase):
         @param imageData: image to be used for prediction, as string of
             bytes or as numpy array..
 
-        @return predictions: list of node IDs as integers. These can be mapped
-            one to one with the row indexes of the labels file, to get
-            the readable labels for a category.
+        @return predictions: list of prediction items in descending order,
+            with each dict item having a 'label' and 'score' value. Exclude
+            scores at or below the threshold of 5%.
         """
         inputTensor = self.getConf().get('tensors', 'input')
         outputTensor = self.getConf().get('tensors', 'output')
@@ -280,11 +270,15 @@ class ImagePluginBase(PluginBase):
             softmaxTensor = session.graph.get_tensor_by_name(outputTensor)
             predictions = session.run(softmaxTensor, params)
 
-        # Get items and sort from highest to lowest probability.
+        # Get node IDs and sort from highest to lowest probability.
         sortedResults = reversed(predictions[0].argsort())
 
-        # Convert numpy array into a list of node IDs.
-        return list(sortedResults)
+        return [
+            {
+                'label': self.labels[nodeID],
+                'score': "{:3.2%}".format(predictions[0][nodeID])
+            } for nodeID in sortedResults if predictions[0][nodeID] > 0.05
+        ]
 
     def process(self, imagePath=None, imageFile=None, x=None, y=None):
         """Do category prediction on the configured plugin instance using
@@ -296,7 +290,8 @@ class ImagePluginBase(PluginBase):
 
         @param imagePath: Default None. path to local image on server, as
             a string.
-        @param imageFile: Default None. Image data from request body.
+        @param imageFile: Default None. Multi-party cherrpy request body.
+            This is expected to have a file attribute with image data.
         @param x: Default None. The X co-ordinate of the mark on the image, as
             a percentage value from 0 to 100. As an integer.
         @param y: Default None. The Y co-ordinate of the mark on the image, as
@@ -308,27 +303,26 @@ class ImagePluginBase(PluginBase):
 
         if imagePath:
             image = imagePath
+            filename = os.path.basename(image)
         elif imageFile:
-            image = imageFile
+            image = imageFile.file
+            filename = imageFile.filename
         else:
-            raise ValueError("Expected value for `imagePath` or `imageFile`"
-                             " in input data.")
+            raise ValueError("Expected value for either`imagePath` or"
+                             " `imageFile` parameters.")
 
         preProcessedImg = self._preProcessImg(image, x, y)
-        nodes = self._doPrediction(preProcessedImg)
-        predictedLabels = [self.labels[nodeID] for nodeID in nodes]
+        predictions = self._doPrediction(preProcessedImg)
 
-        # TODO: Get filename from uploaded image on imageFile object.
-        filename = imagePath
-        msg = 'Completed prediction. Duration: {0:4.3f}s.'\
-            ' Filename: {1}. Results: {2}.'.format(
-                time.time() - start,
-                filename,
-                json.dumps(predictedLabels)
+        msg = "Completed prediction. Duration: {duration:4.3f}s."\
+            " Filename: {filename}. Results: {results}.".format(
+                duration=time.time() - start,
+                filename=filename,
+                results=json.dumps(predictions)
             )
         logger(msg=msg, context=self.getContext())
 
-        return predictedLabels
+        return predictions
 
 
 def testPlugin(pluginClass, modelName):
