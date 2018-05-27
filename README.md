@@ -14,7 +14,7 @@ Some of the concepts and approaches I discuss in my talk are for scaling a servi
 ## Documentation
 
 - [Installation instructions](docs/installation.md)
-- [Usage instructions](docs/usage.md) for starting the web app and uploading the project's [sample images](/sampleIages) to the server
+- [Usage instructions](docs/usage.md) for starting the web app and uploading the project's [sample images](sampleImages/) to the server
 - [Custom Models](docs/customModels.md) for optionally dropping in a user-trained model
 - [API endpoints](docs/api.md)
 
