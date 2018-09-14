@@ -5,11 +5,17 @@ _Author: Michael Currin_
 
 ![Deep Learning Workshops logo](mlserver/static/img/Deep_Learning_Workshops_logo.png)
 
-## About
+The purpose of this application is to provide a predictions service (whether through the command-line or browser) which can receive an image and then return either:
+- probable color labels and confidence scores at a co-ordinate point, classifying with labels such as those in [colors.txt](mlserver/models/builtinColorClassifier/colors.txt).
+- provide digit labels and confidence scores for an image of a handwritten digit, using labels like these: [digits.txt](mlserver/models/builtinDigitClassifier/digits.txt). The MNIST dataset was used for training.
 
-I give a talk on how to a productionise a machine learning service in a web server, as part of [Deep Learning Workshops](https://deeplearningworkshops.com) in Cape Town. This project contains the code and instructions needed to setup one's own local prediction service and is intended as additional material for anyone attending the workshops or with an interest in this topic.
+
+## Background
+
+As part of [Deep Learning Workshops](https://deeplearningworkshops.com) in Cape Town, I give a talk on how to a productionise a machine learning service in a web server. This project contains the code and instructions needed to setup one's own local prediction service and is intended as additional material for anyone attending the workshops or with an interest in this topic.  
 
 Some of the concepts and approaches I discuss in my talk are for scaling a service deployed to production. However, this project only is a simplified version of such a predictions service, with some infrastructure removed. Since this is only expected to be run locally and so that the main logic is clearer to follow.
+
 
 ## Documentation
 
