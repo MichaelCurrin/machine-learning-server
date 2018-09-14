@@ -5,7 +5,7 @@
     ```bash
     $ cd path/to/machine-learning-server/mlserver
     $ source ../venv/bin/activate
-    $ (venv) ./app.py
+    $ ./app.py
     ```
 
 2. View the application's log files.
@@ -16,7 +16,7 @@
     $ tail -F *.log
     ```
 
-3. Test the application is running at [http://localhost:9000]().
+3. Test the application is running at [http://localhost:9000](http://localhost:9000).
 
 4. Use the project's sample images to do predictions.
 
