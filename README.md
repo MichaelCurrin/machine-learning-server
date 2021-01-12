@@ -10,6 +10,11 @@ The purpose of this application is to provide a predictions service (whether thr
 - provide digit labels and confidence scores for an image of a handwritten digit, using labels like these: [digits.txt](mlserver/models/builtinDigitClassifier/digits.txt). The MNIST dataset was used for training.
 
 
+## Note
+
+This project is not actively maintained. There are more elegant and modern ways to achieve what is done here and also more interesting that this. I am only going to update dependencies for security vulnerabilities.
+
+
 ## Background
 
 As part of [Deep Learning Workshops](https://deeplearningworkshops.com) in Cape Town, I give a talk on how to a productionise a machine learning service in a web server. This project contains the code and instructions needed to setup one's own local prediction service and is intended as additional material for anyone attending the workshops or with an interest in this topic.  
